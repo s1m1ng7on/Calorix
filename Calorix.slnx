@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="Calorix/Calorix.vcxproj" />
+  <Project Path="Calorix/Calorix.vcxproj" Id="c7176d8c-1e9e-4391-9fca-a5c1d5d4d26c" />
 </Solution>

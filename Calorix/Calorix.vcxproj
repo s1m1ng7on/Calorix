@@ -128,6 +128,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Calorix.cpp" />
+    <ClCompile Include="Exercise.cpp" />
+    <ClCompile Include="ExerciseEntry.cpp" />
+    <ClCompile Include="FitnessGoal.cpp" />
+    <ClCompile Include="Food.cpp" />
+    <ClCompile Include="FoodEntry.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Trainee.cpp" />
     <ClCompile Include="User.cpp" />
@@ -135,6 +140,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Calorix.h" />
+    <ClInclude Include="Exercise.h" />
+    <ClInclude Include="ExerciseEntry.h" />
+    <ClInclude Include="FitnessGoal.h" />
+    <ClInclude Include="Food.h" />
+    <ClInclude Include="FoodEntry.h" />
+    <ClInclude Include="Identifiable.hpp" />
     <ClInclude Include="Trainee.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserProfile.h" />

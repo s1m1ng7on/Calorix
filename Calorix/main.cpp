@@ -7,10 +7,10 @@ int main()
     Calorix calorix;
 
     //Successful register
-    calorix.registerUser("s1m1ng7on", "simeon20", 20, 96.3, 178, UserProfile::Gender::Male);
+    calorix.registerUser("s1m1ng7on", "simeon20", 20, 96.3, 178, Gender::Male);
 
     //Unsuccessful register (logout required)
-    calorix.registerUser("babatunde", "lava_bear", 20, 96.3, 178, UserProfile::Gender::Male);
+    calorix.registerUser("babatunde", "lava_bear", 20, 96.3, 178, Gender::Male);
 
     //Successful logout
     calorix.logout();
@@ -34,13 +34,13 @@ int main()
     calorix.logout();
 
     //Successful register
-    calorix.registerUser("babatunde", "lava_bear", 20, 96.3, 178, UserProfile::Gender::Male);
+    calorix.registerUser("babatunde", "lava_bear", 20, 96.3, 178, Gender::Male);
 
     //Successful logout
     calorix.logout();
 
     //Failed register (user with this username already exists)
-    calorix.registerUser("babatunde", "lava_bear", 20, 96.3, 178, UserProfile::Gender::Male);
+    calorix.registerUser("babatunde", "lava_bear", 20, 96.3, 178, Gender::Male);
 
     return 0;
 }
