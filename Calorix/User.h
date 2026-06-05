@@ -3,13 +3,13 @@
 #include "memory"
 #include "Identifiable.hpp"
 #include "UserProfile.h"
+#include "Calorix.h"
 
 class User : public Identifiable<User>
 {
 private:
 	std::string _username;
 	std::string _password;
-	std::unique_ptr<UserProfile> _profile;
 public:
 	std::string getUsername() const;
 	bool authenticate(const std::string& rawPassword) const;
@@ -18,6 +18,7 @@ public:
 	virtual ~User() = default;
 	//TODO
 protected:
+	std::unique_ptr<UserProfile> _profile;
 	const Calorix* _app;
 };
 

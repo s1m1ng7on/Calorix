@@ -4,6 +4,13 @@
 #include "Food.h"
 #include <ctime>
 
+enum class Nutrient {
+	Calories,
+	Protein,
+	Carbs,
+	Fat
+};
+
 class FoodEntry : Identifiable<FoodEntry>
 {
 private:
@@ -12,7 +19,8 @@ private:
 	time_t _date = std::time(nullptr);
 public:
 	time_t getDate() const;
-
+	std::shared_ptr<Food> getFood() const;
+	int getNutrient(Nutrient type) const;
 	FoodEntry(std::shared_ptr<Food> food, int quantityGrams);
 };
 

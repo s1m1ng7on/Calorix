@@ -21,8 +21,8 @@ public:
 	void logExercise(const std::string& exerciseName, int durationMinutes);
 	void viewDailySummary() const;
 	void viewProgress() const;
-	double calculateBMI() const;
-	double calculateBMR() const;
+	void calculateBMI() const;
+	void calculateBMR() const;
 	std::vector<std::shared_ptr<Exercise>> generateWorkoutPlan(int durationMinutes) const;
 	void addToFavorites(const std::string& exerciseName);
 	void viewFavorites() const;

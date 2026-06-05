@@ -11,6 +11,8 @@ private:
 	int _durationMinutes;
 	time_t _date = std::time(nullptr);
 public:
+	time_t getDate() const;
+	int getBurnedCalories() const;
 	ExerciseEntry(std::shared_ptr<Exercise> exercise, int durationMinutes);
 };
 

@@ -16,6 +16,8 @@ private:
 	time_t _deadline = time_t(0);
 	bool isAchieved = false;
 public:
+	GoalType getGoalType() const;
+	double getTargetValue() const;
 	FitnessGoal() = default;
 	FitnessGoal(GoalType goalType, double targetValue, time_t deadline);
 };

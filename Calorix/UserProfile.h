@@ -22,6 +22,10 @@ private:
 	Gender _gender;
 	ActivityLevel _activityLevel;
 public:
+	int getAge() const;
+	double getWeight() const;
+	int getHeight() const;
+	Gender getGender() const;
 	UserProfile(int age, double weight, int height, Gender gender);
 };
 

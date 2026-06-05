@@ -23,5 +23,6 @@ public:
 
 	std::shared_ptr<Food> getFoodByName(const std::string& foodName) const;
 	std::shared_ptr<Exercise> getExerciseByName(const std::string& exerciseName) const;
+	const std::vector<std::shared_ptr<Exercise>>& getExercises() const;
 };
 

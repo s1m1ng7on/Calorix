@@ -4,6 +4,23 @@ time_t FoodEntry::getDate() const {
 	return _date;
 }
 
+std::shared_ptr<Food> FoodEntry::getFood() const {
+	return _food;
+}
+
 FoodEntry::FoodEntry(std::shared_ptr<Food> food, int quantityGrams)
 	: _food(std::move(food))
 	, _quantityGrams(quantityGrams) { }
+
+int FoodEntry::getNutrient(Nutrient type) const {
+	double value = 0;
+
+	switch (type) {
+		case Nutrient::Calories: value = _food->getCaloriesPer100g(); break;
+		case Nutrient::Protein: value = _food->getProteinPer100g(); break;
+		case Nutrient::Carbs: value = _food->getCarbsPer100g(); break;
+		case Nutrient::Fat: value = _food->getFatPer100g(); break;
+	}
+
+	return (static_cast<double>(_quantityGrams) / 100.0) * value;
+}

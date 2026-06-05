@@ -81,15 +81,15 @@ std::shared_ptr<Food> Calorix::getFoodByName(const std::string& foodName) const 
     return *it;
 }
 
-//std::shared_ptr<Exercise> Calorix::getExerciseByName(const std::string& exerciseName) const {
-//    auto it = std::find_if(_exercises.begin(), _exercises.end(), [&](const auto& currentExercise) {
-//        return currentExercise->getName() == exerciseName;
-//        });
-//
-//    if (it == _exercises.end()) {
-//        std::cout << "Exercise does not exist." << std::endl;
-//        return nullptr;
-//    }
-//
-//    return *it;
-//}
+std::shared_ptr<Exercise> Calorix::getExerciseByName(const std::string& exerciseName) const {
+    for (const auto& exercise : _exercises) {
+        if (exercise->getName() == exerciseName)
+            return exercise;
+    }
+
+    throw std::invalid_argument("Exercise with name '" + exerciseName + "' was not found.");
+}
+
+const std::vector<std::shared_ptr<Exercise>>& Calorix::getExercises() const {
+    return _exercises;
+}

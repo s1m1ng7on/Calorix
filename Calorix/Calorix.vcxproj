@@ -133,6 +133,7 @@
     <ClCompile Include="FitnessGoal.cpp" />
     <ClCompile Include="Food.cpp" />
     <ClCompile Include="FoodEntry.cpp" />
+    <ClCompile Include="Helper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Trainee.cpp" />
     <ClCompile Include="User.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="FitnessGoal.h" />
     <ClInclude Include="Food.h" />
     <ClInclude Include="FoodEntry.h" />
+    <ClInclude Include="Helper.h" />
     <ClInclude Include="Identifiable.hpp" />
     <ClInclude Include="Trainee.h" />
     <ClInclude Include="User.h" />
