@@ -10,9 +10,6 @@ void Trainee::setGoals(GoalType goalType, double targetValue, time_t deadline) {
 }
 
 void Trainee::logFood(const std::string& foodName, int quantityGrams) {
-	if (!_app)
-		return;
-
 	auto food = _app->getFoodByName(foodName);
 
 	if (food != nullptr) {
@@ -27,9 +24,6 @@ void Trainee::logFood(const std::string& foodName, int quantityGrams) {
 }
 
 void Trainee::logExercise(const std::string& exerciseName, int durationMinutes) {
-	if (!_app)
-		return;
-
 	auto exercise = _app->getExerciseByName(exerciseName);
 
 	if (exercise != nullptr) {
@@ -200,20 +194,15 @@ std::vector<std::shared_ptr<Exercise>> Trainee::generateWorkoutPlan(int duration
 }
 
 void Trainee::addToFavorites(const std::string& exerciseName) {
-	try {
-		auto exercise = _app->getExerciseByName(exerciseName);
+	auto exercise = _app->getExerciseByName(exerciseName);
 
-		auto it = std::find(_favoriteExercises.begin(), _favoriteExercises.end(), exercise);
-		if (it == _favoriteExercises.end()) {
-			_favoriteExercises.push_back(exercise);
-			std::cout << "Exercise '" + exerciseName + "' was successfully added to your Favorites." << std::endl;
-		}
-		else {
-			throw std::invalid_argument("Exercise '" + exerciseName + "' is already in your Favorites.");
-		}
+	auto it = std::find(_favoriteExercises.begin(), _favoriteExercises.end(), exercise);
+	if (it == _favoriteExercises.end()) {
+		_favoriteExercises.push_back(exercise);
+		std::cout << "Exercise '" + exerciseName + "' was successfully added to your Favorites." << std::endl;
 	}
-	catch (std::invalid_argument exception) {
-		std::cout << exception.what() << std::endl;
+	else {
+		throw std::invalid_argument("Exercise '" + exerciseName + "' is already in your Favorites.");
 	}
 }
 

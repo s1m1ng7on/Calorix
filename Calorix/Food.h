@@ -11,6 +11,8 @@ private:
 	int _carbsPer100g;
 	int _fatPer100g;
 public:
+	Food(std::string name, int caloriesPer100g, int proteinPer100g, int carbsPer100g, int fatPer100g);
+
 	const std::string& getName() const;
 	int getCaloriesPer100g() const;
 	int getProteinPer100g() const;

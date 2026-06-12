@@ -1,6 +1,6 @@
 #include "User.h"
 
-std::string User::getUsername() const {
+const std::string& User::getUsername() const {
 	return _username;
 }
 
@@ -12,4 +12,11 @@ User::User(std::string username, std::string password, int age, double weight, i
 	: _username(std::move(username))
 	, _password(std::move(password))
 	, _profile(std::make_unique<UserProfile>(age, weight, height, gender))
-	, _app(app) { }
+	, _app(app) {
+	if (_app == nullptr)
+		throw std::invalid_argument("Cannot create a User without a valid Calorix app reference.");
+}
+
+bool User::isAdmin() const {
+	return false;
+}

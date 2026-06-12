@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Admin.cpp" />
     <ClCompile Include="Calorix.cpp" />
     <ClCompile Include="Exercise.cpp" />
     <ClCompile Include="ExerciseEntry.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="UserProfile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Admin.h" />
     <ClInclude Include="Calorix.h" />
     <ClInclude Include="Exercise.h" />
     <ClInclude Include="ExerciseEntry.h" />
@@ -147,7 +149,9 @@
     <ClInclude Include="Food.h" />
     <ClInclude Include="FoodEntry.h" />
     <ClInclude Include="Helper.h" />
+    <ClInclude Include="IAdminOperations.h" />
     <ClInclude Include="Identifiable.hpp" />
+    <ClInclude Include="ITraineeOperations.h" />
     <ClInclude Include="Trainee.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserProfile.h" />
