@@ -26,3 +26,7 @@ int Food::getCarbsPer100g() const {
 int Food::getFatPer100g() const {
 	return _fatPer100g;
 }
+
+void Food::setCaloriesPer100g(int newCaloriesPer100g) {
+	_caloriesPer100g = newCaloriesPer100g;
+}

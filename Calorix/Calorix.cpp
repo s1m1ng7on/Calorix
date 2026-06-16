@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "Calorix.h"
+#include <expected>
 
 bool Calorix::isLogged() const {
     return _loggedUser != nullptr;
@@ -19,6 +20,20 @@ void Calorix::ensureLoggedOut() const {
 void Calorix::ensureIsAdmin() const {
     if (!_loggedUser->isAdmin())
         throw std::logic_error("This action required you to be an admin.");
+}
+
+void Calorix::addFoodInternal(std::string name, int caloriesPer100g, int proteinPer100g, int carbsPer100g, int fatPer100g) {
+    if (getFoodByName(name))
+        throw std::runtime_error("Food item with the same name already exists.");
+
+    _foods.push_back(std::make_shared<Food>(std::move(name), caloriesPer100g, proteinPer100g, fatPer100g));
+}
+
+void Calorix::addExerciseInternal(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup) {
+    if (getExerciseByName(name))
+        throw std::runtime_error("Exercise with the same name already exists.");
+
+    _exercises.push_back(std::make_shared<Exercise>(std::move(name), caloriesBurnedPerHour, suggestedDuration, muscleGroup));
 }
 
 Calorix::Calorix()
@@ -76,25 +91,48 @@ void Calorix::blockUser(const std::string& username) {
     _users.erase(it);
 }
 
-std::shared_ptr<Food> Calorix::getFoodByName(const std::string& foodName) const {
+void Calorix::addFood(std::string name, int caloriesPer100g, int proteinPer100g, int carbsPer100g, int fatPer100g) {
+    ensureLoggedIn();
+    ensureIsAdmin();
+
+    addFoodInternal(std::move(name), caloriesPer100g, proteinPer100g, carbsPer100g, fatPer100g);
+}
+
+void Calorix::addExercise(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup) {
+    ensureLoggedIn();
+    ensureIsAdmin();
+
+    addExerciseInternal(std::move(name), caloriesBurnedPerHour, suggestedDuration, muscleGroup);
+}
+
+void Calorix::updateFood(const std::string& name, int newCaloriesPer100g) {
+    auto result = getFoodByName(name);
+
+    if (result)
+        result.value()->setCaloriesPer100g(newCaloriesPer100g);
+    else
+        throw std::runtime_error("Update failed: " + result.error());
+}
+
+std::expected<Food*, std::string> Calorix::getFoodByName(const std::string& foodName) const {
     auto it = std::find_if(_foods.begin(), _foods.end(), [&](const auto& currentFood) {
         return currentFood->getName() == foodName;
     });
 
     if (it == _foods.end()) {
-        throw std::runtime_error("Food item does not exist.");
+        return std::unexpected("Food item does not exist.");
     }
 
-    return *it;
+    return it->get();
 }
 
-std::shared_ptr<Exercise> Calorix::getExerciseByName(const std::string& exerciseName) const {
+std::expected<Exercise*, std::string> Calorix::getExerciseByName(const std::string& exerciseName) const {
     for (const auto& exercise : _exercises) {
         if (exercise->getName() == exerciseName)
-            return exercise;
+            return exercise.get();
     }
 
-    throw std::invalid_argument("Exercise with name '" + exerciseName + "' was not found.");
+    return std::unexpected("Exercise with name '" + exerciseName + "' was not found.");
 }
 
 const std::vector<std::shared_ptr<Exercise>>& Calorix::getExercises() const {

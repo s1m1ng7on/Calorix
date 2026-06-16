@@ -1,6 +1,13 @@
 #include "Exercise.h"
 #include <iostream>
 
+Exercise::Exercise(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup)
+	: _name(std::move(name))
+	, _caloriesBurnedPerHour(caloriesBurnedPerHour)
+	, _suggestedDuration(suggestedDuration)
+	, _muscleGroup(muscleGroup) {
+}
+
 const std::string& Exercise::getName() const {
 	return _name;
 }

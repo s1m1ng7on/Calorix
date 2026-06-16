@@ -18,9 +18,14 @@ class Exercise : Identifiable<Exercise>
 private:
 	std::string _name;
 	int _caloriesBurnedPerHour;
-	int _suggestedDuration;			//Used for the knapsack algorithm
+
+	// Used for the knapsack algorithm
+	int _suggestedDuration;
+
 	MuscleGroup _muscleGroup;
 public:
+	Exercise(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup);
+
 	const std::string& getName() const;
 	int getCaloriesBurnedPerHour() const;
 	int getSuggestedDuration() const;

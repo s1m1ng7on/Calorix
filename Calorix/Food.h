@@ -18,5 +18,7 @@ public:
 	int getProteinPer100g() const;
 	int getCarbsPer100g() const;
 	int getFatPer100g() const;
+
+	void setCaloriesPer100g(int newCaloriesPer100g);
 };
 
