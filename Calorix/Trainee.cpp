@@ -1,6 +1,7 @@
 #include "Trainee.h"
 #include <iostream>
 #include "Helper.h"
+#include "Calorix.h"
 
 Trainee::Trainee(std::string username, std::string password, int age, double weight, int height, Gender gender, Calorix* app)
 	: User(std::move(username), std::move(password), age, weight, height, gender, app) { }
@@ -10,10 +11,10 @@ void Trainee::setGoals(GoalType goalType, double targetValue, time_t deadline) {
 }
 
 void Trainee::logFood(const std::string& foodName, int quantityGrams) {
-	auto food = _app->getFoodByName(foodName);
+	auto result = _app->getFoodByName(foodName);
 
-	if (food != nullptr) {
-		FoodEntry newFoodEntry(food, quantityGrams);
+	if (result) {
+		FoodEntry newFoodEntry(result.value(), quantityGrams);
 		_foodDiary.push_back(std::move(newFoodEntry));
 
 		std::cout << foodName << " logged in your food diary.";
@@ -24,10 +25,10 @@ void Trainee::logFood(const std::string& foodName, int quantityGrams) {
 }
 
 void Trainee::logExercise(const std::string& exerciseName, int durationMinutes) {
-	auto exercise = _app->getExerciseByName(exerciseName);
+	auto result = _app->getExerciseByName(exerciseName);
 
-	if (exercise != nullptr) {
-		ExerciseEntry newExerciseEntry(exercise, durationMinutes);
+	if (result) {
+		ExerciseEntry newExerciseEntry(result.value(), durationMinutes);
 		_exerciseDiary.push_back(std::move(newExerciseEntry));
 
 		std::cout << exerciseName << " logged in your exercise diary.";
@@ -82,7 +83,7 @@ void Trainee::viewDailySummary() const {
 		<< " g"
 		<< std::endl
 		<< "Burned Calories: "
-		<< totalProtein
+		<< totalBurnedCalories
 		<< " kcal"
 		<< std::endl
 		<< std::endl
@@ -144,7 +145,7 @@ void Trainee::calculateBMR() const {
 		<< std::endl;
 }
 
-std::vector<std::shared_ptr<Exercise>> Trainee::generateWorkoutPlan(int durationMinutes) const {
+std::vector<const Exercise*> Trainee::generateWorkoutPlan(int durationMinutes) const {
 	const auto& exercises = _app->getExercises();
 
 	int rows = exercises.size() + 1;
@@ -176,11 +177,11 @@ std::vector<std::shared_ptr<Exercise>> Trainee::generateWorkoutPlan(int duration
 		}
 	}
 
-	std::vector<std::shared_ptr<Exercise>> workoutPlan;
+	std::vector<const Exercise*> workoutPlan;
 	int currentColumn = durationMinutes;
 	for (int i = rows - 1; i > 0; i--) {
 		if (knapsackMatrix[i][currentColumn] != knapsackMatrix[i - 1][currentColumn]) {
-			workoutPlan.push_back(exercises[i - 1]);
+			workoutPlan.push_back(exercises[i - 1].get());
 			currentColumn -= exercises[i - 1]->getSuggestedDuration();
 		}
 	}
@@ -196,19 +197,21 @@ std::vector<std::shared_ptr<Exercise>> Trainee::generateWorkoutPlan(int duration
 void Trainee::addToFavorites(const std::string& exerciseName) {
 	auto exercise = _app->getExerciseByName(exerciseName);
 
-	auto it = std::find(_favoriteExercises.begin(), _favoriteExercises.end(), exercise);
-	if (it == _favoriteExercises.end()) {
-		_favoriteExercises.push_back(exercise);
-		std::cout << "Exercise '" + exerciseName + "' was successfully added to your Favorites." << std::endl;
-	}
-	else {
-		throw std::invalid_argument("Exercise '" + exerciseName + "' is already in your Favorites.");
+	if (exercise) {
+		auto it = std::find(_favoriteExercises.begin(), _favoriteExercises.end(), exercise.value());
+		if (it == _favoriteExercises.end()) {
+			_favoriteExercises.push_back(exercise.value());
+			std::cout << "Exercise '" + exerciseName + "' was successfully added to your Favorites." << std::endl;
+		}
+		else {
+			throw std::invalid_argument("Exercise '" + exerciseName + "' is already in your Favorites.");
+		}
 	}
 }
 
 void Trainee::viewFavorites() const {
 	for (const auto& exercise : _favoriteExercises) {
-		std::cout << exercise << std::endl;
+		std::cout << *exercise << std::endl;
 	}
 }
 

@@ -4,12 +4,8 @@ time_t FoodEntry::getDate() const {
 	return _date;
 }
 
-std::shared_ptr<Food> FoodEntry::getFood() const {
-	return _food;
-}
-
-FoodEntry::FoodEntry(std::shared_ptr<Food> food, int quantityGrams)
-	: _food(std::move(food))
+FoodEntry::FoodEntry(const Food* food, int quantityGrams)
+	: _food(food)
 	, _quantityGrams(quantityGrams) { }
 
 int FoodEntry::getNutrient(Nutrient type) const {

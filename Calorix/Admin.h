@@ -1,6 +1,7 @@
 #pragma once
 #include "User.h"
 #include <stdexcept>
+#include "Calorix.h"
 
 class Admin : public User
 {

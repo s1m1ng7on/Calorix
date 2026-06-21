@@ -1,6 +1,7 @@
 #include "CalorixTextFileDataManager.h"
 #include <fstream>
 #include <iostream>
+#include "Calorix.h"
 
 std::string CalorixTextFileDataManager::trim(const std::string& str) {
     size_t first = str.find_first_not_of(" \t\r\n");

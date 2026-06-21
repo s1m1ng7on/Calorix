@@ -14,6 +14,7 @@ class Calorix : public ITraineeOperations, public IAdminOperations
 	friend class CalorixTextFileDataManager;
 private:
 	std::vector<std::unique_ptr<User>> _users;
+	const std::string _filename;
 
 	//Food items and exercises are shared_ptr on purpose
 	//Multiple Calorix instances may contain the same food items or exercises
@@ -32,6 +33,8 @@ private:
 	void addExerciseInternal(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup);
 public:
 	Calorix();
+	Calorix(std::string filename);
+	~Calorix();
 
 	void registerUser(std::string username, std::string password, int age, double weight, int height, Gender gender);
 	void login(const std::string& username, const std::string& password);
@@ -42,8 +45,8 @@ public:
 	void addExercise(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup) override;
 	void updateFood(const std::string& name, int newCaloriesPer100g) override;
 
-	std::expected<Food*, std::string> getFoodByName(const std::string& foodName) const override;
-	std::expected<Exercise*, std::string> getExerciseByName(const std::string& exerciseName) const override;
+	std::expected<const Food*, std::string> getFoodByName(const std::string& foodName) const override;
+	std::expected<const Exercise*, std::string> getExerciseByName(const std::string& exerciseName) const override;
 	const std::vector<std::shared_ptr<Exercise>>& getExercises() const override;
 };
 

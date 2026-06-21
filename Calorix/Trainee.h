@@ -12,7 +12,7 @@ private:
 	std::vector<FoodEntry> _foodDiary;
 	std::vector<ExerciseEntry> _exerciseDiary;
 	FitnessGoal _goals;
-	std::vector<std::shared_ptr<Exercise>> _favoriteExercises;
+	std::vector<const Exercise*> _favoriteExercises;
 public:
 	Trainee(std::string username, std::string password, int age, double weight, int height, Gender gender, Calorix* app);
 
@@ -23,7 +23,7 @@ public:
 	void viewProgress() const;
 	void calculateBMI() const;
 	void calculateBMR() const;
-	std::vector<std::shared_ptr<Exercise>> generateWorkoutPlan(int durationMinutes) const;
+	std::vector<const Exercise*> generateWorkoutPlan(int durationMinutes) const;
 	void addToFavorites(const std::string& exerciseName);
 	void viewFavorites() const;
 };

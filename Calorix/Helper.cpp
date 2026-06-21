@@ -1,15 +1,12 @@
 #include "Helper.h"
+#include <chrono>
 
 bool Helper::isToday(const time_t& entryTimeStamp) {
-	time_t currentTimeStamp = std::time(nullptr);
+    auto current_zone = std::chrono::current_zone();
 
-	tm* currentTime = std::localtime(&currentTimeStamp);
-	tm* entryTime = std::localtime(&entryTimeStamp);
+    auto current_day = current_zone->to_local(std::chrono::system_clock::now());
+    auto entry_day = current_zone->to_local(std::chrono::system_clock::from_time_t(entryTimeStamp));
 
-	if (currentTime->tm_mday == entryTime->tm_mday &&
-		currentTime->tm_mon == entryTime->tm_mon &&
-		currentTime->tm_year == entryTime->tm_year)
-		return true;
-
-	return false;
+    return std::chrono::floor<std::chrono::days>(current_day) ==
+        std::chrono::floor<std::chrono::days>(entry_day);
 }

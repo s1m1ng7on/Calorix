@@ -2,6 +2,7 @@
 #include <string>
 #include "Calorix.h"
 #include <expected>
+#include "CalorixTextFileDataManager.h" 
 
 bool Calorix::isLogged() const {
     return _loggedUser != nullptr;
@@ -41,7 +42,7 @@ void Calorix::addFoodInternal(std::string name, int caloriesPer100g, int protein
     if (getFoodByName(name))
         throw std::runtime_error("Food item with the same name already exists.");
 
-    _foods.push_back(std::make_shared<Food>(std::move(name), caloriesPer100g, proteinPer100g, fatPer100g));
+    _foods.push_back(std::make_shared<Food>(std::move(name), caloriesPer100g, proteinPer100g, carbsPer100g, fatPer100g));
 }
 
 void Calorix::addExerciseInternal(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup) {
@@ -53,6 +54,16 @@ void Calorix::addExerciseInternal(std::string name, int caloriesBurnedPerHour, i
 
 Calorix::Calorix()
     : _loggedUser(nullptr) { }
+
+Calorix::Calorix(std::string filename)
+    : _loggedUser(nullptr)
+    , _filename(std::move(filename)) {
+    CalorixTextFileDataManager::loadFromFile(_filename, *this);
+}
+
+Calorix::~Calorix() {
+    CalorixTextFileDataManager::saveToFile(_filename, *this);
+}
 
 void Calorix::registerUser(std::string username, std::string password, int age, double weight, int height, Gender gender) {
     ensureLoggedOut();
@@ -123,19 +134,16 @@ void Calorix::updateFood(const std::string& name, int newCaloriesPer100g) {
         throw std::runtime_error("Update failed: " + result.error());
 }
 
-std::expected<Food*, std::string> Calorix::getFoodByName(const std::string& foodName) const {
-    auto it = std::find_if(_foods.begin(), _foods.end(), [&](const auto& currentFood) {
-        return currentFood->getName() == foodName;
-    });
-
-    if (it == _foods.end()) {
-        return std::unexpected("Food item does not exist.");
+std::expected<const Food*, std::string> Calorix::getFoodByName(const std::string& foodName) const {
+    for (const auto& food : _foods) {
+        if (food->getName() == foodName)
+            return food.get();
     }
 
-    return it->get();
+    return std::unexpected("Food with name '" + foodName + "' was not found.");
 }
 
-std::expected<Exercise*, std::string> Calorix::getExerciseByName(const std::string& exerciseName) const {
+std::expected<const Exercise*, std::string> Calorix::getExerciseByName(const std::string& exerciseName) const {
     for (const auto& exercise : _exercises) {
         if (exercise->getName() == exerciseName)
             return exercise.get();

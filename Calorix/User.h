@@ -3,7 +3,8 @@
 #include "memory"
 #include "Identifiable.hpp"
 #include "UserProfile.h"
-#include "Calorix.h"
+
+class Calorix;
 
 class User : public Identifiable<User>
 {

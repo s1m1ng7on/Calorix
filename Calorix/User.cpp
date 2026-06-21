@@ -1,5 +1,6 @@
 #include "User.h"
 #include <stdexcept>
+#include "Calorix.h"
 
 const std::string& User::getUsername() const {
 	return _username;

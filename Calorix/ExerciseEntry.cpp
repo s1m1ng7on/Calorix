@@ -8,6 +8,6 @@ int ExerciseEntry::getBurnedCalories() const {
 	return (_durationMinutes / 60) * _exercise->getCaloriesBurnedPerHour();
 }
 
-ExerciseEntry::ExerciseEntry(std::shared_ptr<Exercise> exercise, int durationMinutes)
-	: _exercise(std::move(exercise))
+ExerciseEntry::ExerciseEntry(const Exercise* exercise, int durationMinutes)
+	: _exercise(exercise)
 	, _durationMinutes(durationMinutes) { }

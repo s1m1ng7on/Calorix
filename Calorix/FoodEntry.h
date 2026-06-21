@@ -14,13 +14,12 @@ enum class Nutrient {
 class FoodEntry : Identifiable<FoodEntry>
 {
 private:
-	std::shared_ptr<Food> _food;
+	const Food* _food;
 	int _quantityGrams;
 	time_t _date = std::time(nullptr);
 public:
 	time_t getDate() const;
-	std::shared_ptr<Food> getFood() const;
 	int getNutrient(Nutrient type) const;
-	FoodEntry(std::shared_ptr<Food> food, int quantityGrams);
+	FoodEntry(const Food* food, int quantityGrams);
 };
 

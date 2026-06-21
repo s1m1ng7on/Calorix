@@ -7,12 +7,12 @@
 class ExerciseEntry : Identifiable<ExerciseEntry>
 {
 private:
-	std::shared_ptr<Exercise> _exercise;
+	const Exercise* _exercise;
 	int _durationMinutes;
 	time_t _date = std::time(nullptr);
 public:
 	time_t getDate() const;
 	int getBurnedCalories() const;
-	ExerciseEntry(std::shared_ptr<Exercise> exercise, int durationMinutes);
+	ExerciseEntry(const Exercise* exercise, int durationMinutes);
 };
 
