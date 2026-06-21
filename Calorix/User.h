@@ -8,6 +8,8 @@
 class User : public Identifiable<User>
 {
 private:
+	friend class CalorixTextFileDataManager;
+
 	std::string _username;
 	std::string _password;
 public:
@@ -17,7 +19,6 @@ public:
 
 	User(std::string username, std::string password, int age, double weight, int height, Gender gender, Calorix* app);
 	virtual ~User() = default;
-	//TODO
 protected:
 	std::unique_ptr<UserProfile> _profile;
 	Calorix* _app;

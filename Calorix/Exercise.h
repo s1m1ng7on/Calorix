@@ -30,6 +30,7 @@ public:
 	int getCaloriesBurnedPerHour() const;
 	int getSuggestedDuration() const;
 	int getCaloriesForSuggestedDuration() const;
+	MuscleGroup getMuscleGroup() const;
 
 	friend std::ostream& operator<<(std::ostream& os, const Exercise& exercise);
 };

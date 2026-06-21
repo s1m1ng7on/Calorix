@@ -24,6 +24,10 @@ int Exercise::getCaloriesForSuggestedDuration() const {
 	return (_suggestedDuration / 60.0) * _caloriesBurnedPerHour;
 }
 
+MuscleGroup Exercise::getMuscleGroup() const {
+	return _muscleGroup;
+}
+
 std::ostream& operator<<(std::ostream& os, const Exercise& exercise) {
 	os << "Name: " << exercise._name
 		<< ", Duration: " << exercise._suggestedDuration << " mins"

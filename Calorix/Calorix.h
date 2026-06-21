@@ -1,16 +1,12 @@
 #pragma once
-#include "vector"
+#include <vector>
 #include <memory>
 #include "User.h"
-#include "string"
+#include <string>
 #include "Food.h"
 #include "Exercise.h"
-#include <iostream>
-#include <algorithm>
 #include "ITraineeOperations.h"
 #include "IAdminOperations.h"
-#include <fstream>
-#include "CalorixTextFileDataManager.h"
 #include <expected>
 
 class Calorix : public ITraineeOperations, public IAdminOperations
@@ -31,6 +27,7 @@ private:
 	void ensureLoggedOut() const;
 	void ensureIsAdmin() const;
 
+	User* addUserInternal(std::string username, std::string password, int age, double weight, int height, Gender gender);
 	void addFoodInternal(std::string name, int caloriesPer100g, int proteinPer100g, int carbsPer100g, int fatPer100g);
 	void addExerciseInternal(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup);
 public:

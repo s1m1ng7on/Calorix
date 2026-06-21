@@ -1,4 +1,5 @@
 #include "User.h"
+#include <stdexcept>
 
 const std::string& User::getUsername() const {
 	return _username;
