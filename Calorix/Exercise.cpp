@@ -1,11 +1,11 @@
 #include "Exercise.h"
 #include <iostream>
 
-Exercise::Exercise(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup)
+Exercise::Exercise(std::string name, int caloriesBurnedPerHour, int suggestedDuration, std::string muscleGroup)
 	: _name(std::move(name))
 	, _caloriesBurnedPerHour(caloriesBurnedPerHour)
 	, _suggestedDuration(suggestedDuration)
-	, _muscleGroup(muscleGroup) {
+	, _muscleGroup(std::move(muscleGroup)) {
 }
 
 const std::string& Exercise::getName() const {
@@ -24,7 +24,7 @@ int Exercise::getCaloriesForSuggestedDuration() const {
 	return (_suggestedDuration / 60.0) * _caloriesBurnedPerHour;
 }
 
-MuscleGroup Exercise::getMuscleGroup() const {
+const std::string& Exercise::getMuscleGroup() const {
 	return _muscleGroup;
 }
 

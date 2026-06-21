@@ -5,7 +5,7 @@ time_t ExerciseEntry::getDate() const {
 }
 
 int ExerciseEntry::getBurnedCalories() const {
-	return (_durationMinutes / 60) * _exercise->getCaloriesBurnedPerHour();
+	return (_durationMinutes / 60.00) * _exercise->getCaloriesBurnedPerHour();
 }
 
 ExerciseEntry::ExerciseEntry(const Exercise* exercise, int durationMinutes)

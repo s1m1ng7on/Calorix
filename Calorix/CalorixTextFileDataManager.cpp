@@ -74,7 +74,7 @@ void CalorixTextFileDataManager::loadFromFile(const std::string& filename, Calor
                 calorix.addFoodInternal(tokens[0], std::stoi(tokens[1]), std::stoi(tokens[2]), std::stoi(tokens[3]), std::stoi(tokens[4]));
                 break;
             case Section::Exercises:
-                calorix.addExerciseInternal(tokens[0], std::stoi(tokens[1]), std::stoi(tokens[2]), static_cast<MuscleGroup>(std::stoi(tokens[3])));
+                calorix.addExerciseInternal(tokens[0], std::stoi(tokens[1]), std::stoi(tokens[2]), tokens[3]);
                 break;
             case Section::None:
                 break;
@@ -125,7 +125,7 @@ void CalorixTextFileDataManager::saveToFile(const std::string& filename, const C
             << exercise->getName() << " | "
             << exercise->getCaloriesBurnedPerHour() << " | "
             << exercise->getSuggestedDuration() << " | "
-            << static_cast<int>(exercise->getMuscleGroup()) << "\n";
+            << exercise->getMuscleGroup() << "\n";
     }
 
     file.close();

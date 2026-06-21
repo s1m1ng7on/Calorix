@@ -2,17 +2,6 @@
 #include "Identifiable.hpp"
 #include <string>
 
-enum class MuscleGroup {
-	Chest,
-	Back,
-	Shoulders,
-	Biceps,
-	Triceps,
-	Quads,
-	Hamstrings,
-	Core
-};
-
 class Exercise : Identifiable<Exercise>
 {
 private:
@@ -22,15 +11,15 @@ private:
 	// Used for the knapsack algorithm
 	int _suggestedDuration;
 
-	MuscleGroup _muscleGroup;
+	std::string _muscleGroup;
 public:
-	Exercise(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup);
+	Exercise(std::string name, int caloriesBurnedPerHour, int suggestedDuration, std::string muscleGroup);
 
 	const std::string& getName() const;
 	int getCaloriesBurnedPerHour() const;
 	int getSuggestedDuration() const;
 	int getCaloriesForSuggestedDuration() const;
-	MuscleGroup getMuscleGroup() const;
+	const std::string& getMuscleGroup() const;
 
 	friend std::ostream& operator<<(std::ostream& os, const Exercise& exercise);
 };

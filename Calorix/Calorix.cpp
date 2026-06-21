@@ -2,11 +2,7 @@
 #include <string>
 #include "Calorix.h"
 #include <expected>
-#include "CalorixTextFileDataManager.h" 
-
-bool Calorix::isLogged() const {
-    return _loggedUser != nullptr;
-}
+#include "CalorixTextFileDataManager.h"
 
 void Calorix::ensureLoggedIn() const {
     if (!isLogged())
@@ -45,7 +41,7 @@ void Calorix::addFoodInternal(std::string name, int caloriesPer100g, int protein
     _foods.push_back(std::make_shared<Food>(std::move(name), caloriesPer100g, proteinPer100g, carbsPer100g, fatPer100g));
 }
 
-void Calorix::addExerciseInternal(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup) {
+void Calorix::addExerciseInternal(std::string name, int caloriesBurnedPerHour, int suggestedDuration, std::string muscleGroup) {
     if (getExerciseByName(name))
         throw std::runtime_error("Exercise with the same name already exists.");
 
@@ -53,16 +49,35 @@ void Calorix::addExerciseInternal(std::string name, int caloriesBurnedPerHour, i
 }
 
 Calorix::Calorix()
-    : _loggedUser(nullptr) { }
+    : _loggedUser(nullptr)
+    , _ui(*this) { }
 
 Calorix::Calorix(std::string filename)
     : _loggedUser(nullptr)
-    , _filename(std::move(filename)) {
+    , _filename(std::move(filename))
+    , _ui(*this) {
     CalorixTextFileDataManager::loadFromFile(_filename, *this);
 }
 
 Calorix::~Calorix() {
     CalorixTextFileDataManager::saveToFile(_filename, *this);
+}
+
+Calorix& Calorix::getInstance() {
+    static Calorix instance("calorix-input.txt");
+    return instance;
+}
+
+void Calorix::run() {
+    _ui.run();
+}
+
+bool Calorix::isLogged() const {
+    return _loggedUser != nullptr;
+}
+
+User* Calorix::getLoggedUser() const {
+    return _loggedUser;
 }
 
 void Calorix::registerUser(std::string username, std::string password, int age, double weight, int height, Gender gender) {
@@ -118,11 +133,11 @@ void Calorix::addFood(std::string name, int caloriesPer100g, int proteinPer100g,
     addFoodInternal(std::move(name), caloriesPer100g, proteinPer100g, carbsPer100g, fatPer100g);
 }
 
-void Calorix::addExercise(std::string name, int caloriesBurnedPerHour, int suggestedDuration, MuscleGroup muscleGroup) {
+void Calorix::addExercise(std::string name, int caloriesBurnedPerHour, int suggestedDuration, std::string muscleGroup) {
     ensureLoggedIn();
     ensureIsAdmin();
 
-    addExerciseInternal(std::move(name), caloriesBurnedPerHour, suggestedDuration, muscleGroup);
+    addExerciseInternal(std::move(name), caloriesBurnedPerHour, suggestedDuration, std::move(muscleGroup));
 }
 
 void Calorix::updateFood(const std::string& name, int newCaloriesPer100g) {
@@ -134,7 +149,7 @@ void Calorix::updateFood(const std::string& name, int newCaloriesPer100g) {
         throw std::runtime_error("Update failed: " + result.error());
 }
 
-std::expected<const Food*, std::string> Calorix::getFoodByName(const std::string& foodName) const {
+std::expected<Food*, std::string> Calorix::getFoodByName(const std::string& foodName) const {
     for (const auto& food : _foods) {
         if (food->getName() == foodName)
             return food.get();
