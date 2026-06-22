@@ -19,7 +19,7 @@ void Calorix::ensureIsAdmin() const {
         throw std::logic_error("This action required you to be an admin.");
 }
 
-User* Calorix::addUserInternal(std::string username, std::string password, int age, double weight, int height, Gender gender) {
+User* Calorix::addUserInternal(std::string username, std::string password, int age, double weight, int height, Gender gender, bool isAdmin) {
     auto it = std::find_if(_users.begin(), _users.end(), [&](const auto& currentUser) {
         return currentUser->getUsername() == username;
         });
@@ -27,7 +27,12 @@ User* Calorix::addUserInternal(std::string username, std::string password, int a
     if (it != _users.end())
         throw std::runtime_error("User with username " + username + " already exists.");
 
-    std::unique_ptr<User> newUser = std::make_unique<User>(std::move(username), std::move(password), age, weight, height, gender, this);
+    std::unique_ptr<User> newUser;
+    if (isAdmin)
+        newUser = std::make_unique<Admin>(std::move(username), std::move(password), age, weight, height, gender, this);
+    else
+        newUser = std::make_unique<Trainee>(std::move(username), std::move(password), age, weight, height, gender, this);
+
     User* rawUser = newUser.get();
     _users.push_back(std::move(newUser));
 

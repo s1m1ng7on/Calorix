@@ -6,6 +6,22 @@
 Trainee::Trainee(std::string username, std::string password, int age, double weight, int height, Gender gender, Calorix* app)
 	: User(std::move(username), std::move(password), age, weight, height, gender, app) { }
 
+const std::vector<FoodEntry>& Trainee::getFoodDiary() const {
+	return _foodDiary;
+}
+
+const std::vector<ExerciseEntry>& Trainee::getExerciseDiary() const {
+	return _exerciseDiary;
+}
+
+const FitnessGoal& Trainee::getGoal() const {
+	return _goals;
+}
+
+const std::vector<const Exercise*>& Trainee::getFavoriteExercises() const {
+	return _favoriteExercises;
+}
+
 void Trainee::setGoals(GoalType goalType, double targetValue, time_t deadline) {
 	_goals = FitnessGoal(goalType, targetValue, deadline);
 }

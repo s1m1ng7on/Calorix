@@ -139,7 +139,7 @@ void CalorixUIManager::handleHelp() {
     }
     else {
         std::cout << "Available commands (Trainee):" << std::endl;
-        std::cout << "  set-goals <WEIGHT_LOSS/BULKING/MAINTENANCE> <target_value> <deadline_timestamp>" << std::endl;
+        std::cout << "  set-goals <WeightLoss/Bulking/Maintenance> <target_value> <deadline_timestamp>" << std::endl;
         std::cout << "  log-food <food_name> <quantity_grams>" << std::endl;
         std::cout << "  log-exercise <exercise_name> <duration_minutes>" << std::endl;
         std::cout << "  view-daily-summary" << std::endl;
@@ -166,20 +166,20 @@ void CalorixUIManager::handleSetGoals(std::stringstream& ss) {
     time_t deadline;
 
     if (!(ss >> goalTypeStr >> targetValue >> deadline)) {
-        std::cout << "Usage: set-goals <WEIGHT_LOSS/BULKING/MAINTENANCE> <target_value> <deadline_timestamp>" << std::endl;
+        std::cout << "Usage: set-goals <WeightLoss/Bulking/Maintenance> <target_value> <deadline_timestamp>" << std::endl;
         return;
     }
 
     GoalType goalType = GoalType::Maintenance;
 
-    if (goalTypeStr == "WEIGHT_LOSS")
+    if (goalTypeStr == "WeightLoss")
         goalType = GoalType::WeightLoss;
-    else if (goalTypeStr == "BULKING")
+    else if (goalTypeStr == "Bulking")
         goalType = GoalType::Bulking;
-    else if (goalTypeStr == "MAINTENANCE")
+    else if (goalTypeStr == "Maintenance")
         goalType = GoalType::Maintenance;
     else {
-        std::cout << "Unknown goal type. Use WEIGHT_LOSS, BULKING or MAINTENANCE." << std::endl;
+        std::cout << "Unknown goal type. Use WeightLoss, Bulking or Maintenance." << std::endl;
         return;
     }
 

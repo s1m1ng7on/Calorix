@@ -11,8 +11,11 @@ private:
 	int _durationMinutes;
 	time_t _date = std::time(nullptr);
 public:
+	ExerciseEntry(const Exercise* exercise, int durationMinutes);
+
+	const std::string& getExerciseName() const;
+	int getDurationMinutes() const;
 	time_t getDate() const;
 	int getBurnedCalories() const;
-	ExerciseEntry(const Exercise* exercise, int durationMinutes);
 };
 

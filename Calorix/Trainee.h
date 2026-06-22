@@ -16,6 +16,11 @@ private:
 public:
 	Trainee(std::string username, std::string password, int age, double weight, int height, Gender gender, Calorix* app);
 
+	const std::vector<FoodEntry>& getFoodDiary() const;
+	const std::vector<ExerciseEntry>& getExerciseDiary() const;
+	const FitnessGoal& getGoal() const;
+	const std::vector<const Exercise*>& getFavoriteExercises() const;
+
 	void setGoals(GoalType goalType, double targetValue, time_t deadline);
 	void logFood(const std::string& foodName, int quantityGrams);
 	void logExercise(const std::string& exerciseName, int durationMinutes);

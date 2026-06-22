@@ -1,50 +1,83 @@
-Users:
-alex_smith | password123 | 25 | 78.5 | 182 | Male
-fitness_queen | fitlife2026 | 29 | 62.1 | 168 | Female
-ivan_ivanov | balkanPower | 42 | 94.2 | 185 | Male
-maria_k | secretPass | 19 | 52.0 | 160 | Female
-coach_mike | gainz4days | 38 | 89.7 | 180 | Male
-elena_petrova | sunshin9 | 51 | 68.3 | 165 | Female
-tech_bro_99 | codingLife | 23 | 74.0 | 175 | Male
-sarah_j | activeGirl | 31 | 58.6 | 170 | Female
-grandpa_joe | classic55 | 65 | 81.4 | 177 | Male
-diet_expert | healthyMind | 45 | 70.9 | 173 | Female
--------------------------------------------------
 Food:
 Chicken Breast | 165 | 31 | 0 | 4
+---
 White Rice | 130 | 3 | 28 | 0
+---
 Whole Egg | 155 | 13 | 1 | 11
+---
 Oatmeal, Rolled Oats | 389 | 17 | 66 | 7
+---
 Yogurt, Greek, Plain | 59 | 10 | 4 | 0
+---
 Almonds, Roasted | 579 | 21 | 22 | 50
+---
 Salmon, Atlantic | 208 | 20 | 0 | 13
+---
 Banana, Medium | 89 | 1 | 23 | 0
+---
 Broccoli, Steamed | 34 | 3 | 7 | 0
+---
 Peanut Butter, Smooth | 588 | 25 | 20 | 50
+---
 Avocado, Hass | 160 | 2 | 9 | 15
+---
 Sweet Potato, Baked | 86 | 2 | 20 | 0
+---
 Olive Oil, Extra Virgin | 884 | 0 | 0 | 100
+---
 Tuna, Canned in Water | 116 | 26 | 0 | 1
+---
 Apple, Gala | 52 | 0 | 14 | 0
+---
 Cottage Cheese, Low Fat | 98 | 11 | 3 | 4
+---
 Beef Ribeye, Grilled | 291 | 24 | 0 | 22
+---
 Black Beans, Boiled | 341 | 21 | 62 | 1
+---
 Milk, Skim (0%) | 35 | 3 | 5 | 0
+---
 Chocolate, Dark (70%) | 546 | 5 | 61 | 31
 -------------------------------------------------
 Exercises:
-Bench Press | 450 | 15 | 0
-Deadlift | 600 | 10 | 1
-Overhead Press | 400 | 12 | 2
-Barbell Curl | 300 | 8 | 3
-Tricep Pushdown | 280 | 8 | 4
-Barbell Squat | 550 | 20 | 5
-Romanian Deadlift | 480 | 12 | 6
-Plank | 200 | 5 | 7
-Pull-Ups | 500 | 10 | 1
-Incline Dumbbell Fly | 350 | 12 | 0
-HIIT Sprint | 800 | 15 | 5
-Hanging Leg Raise | 250 | 6 | 7
-Push-Ups | 380 | 10 | 0
-Lateral Raises | 240 | 8 | 2
-Hammer Curls | 290 | 8 | 3
+Bench Press | 450 | 15 | Chest
+---
+Deadlift | 600 | 10 | Back
+---
+Overhead Press | 400 | 12 | Shoulders
+---
+Barbell Curl | 300 | 8 | Arms
+---
+Tricep Pushdown | 280 | 8 | Arms
+---
+Barbell Squat | 550 | 20 | Legs
+---
+Romanian Deadlift | 480 | 12 | Legs
+---
+Plank | 200 | 5 | Core
+---
+Pull-Ups | 500 | 10 | Back
+---
+Incline Dumbbell Fly | 350 | 12 | Chest
+---
+HIIT Sprint | 800 | 15 | Cardio
+---
+Hanging Leg Raise | 250 | 6 | Core
+---
+Push-Ups | 380 | 10 | Chest
+---
+Lateral Raises | 240 | 8 | Shoulders
+---
+Hammer Curls | 290 | 8 | Arms
+-------------------------------------------------
+Users:
+fitness_queen | fitlife2026 | 29 | 62.1 | 168 | Female
+Goals: Maintenance | 0 | 1782121446 | 0 | 0
+FoodDiary:
+Chicken Breast | 200 | 1782121446
+White Rice | 150 | 1782121446
+ExerciseDiary:
+Bench Press | 30 | 1782121446
+FavoriteExercises:
+Pull-Ups
+Deadlift

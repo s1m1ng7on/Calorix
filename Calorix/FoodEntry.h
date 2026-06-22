@@ -18,8 +18,11 @@ private:
 	int _quantityGrams;
 	time_t _date = std::time(nullptr);
 public:
+	FoodEntry(const Food* food, int quantityGrams);
+
+	const std::string& getFoodName() const;
+	int getQuantityGrams() const;
 	time_t getDate() const;
 	int getNutrient(Nutrient type) const;
-	FoodEntry(const Food* food, int quantityGrams);
 };
 

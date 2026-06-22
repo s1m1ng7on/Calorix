@@ -35,7 +35,7 @@ private:
 	void ensureLoggedOut() const;
 	void ensureIsAdmin() const;
 
-	User* addUserInternal(std::string username, std::string password, int age, double weight, int height, Gender gender);
+	User* addUserInternal(std::string username, std::string password, int age, double weight, int height, Gender gender, bool isAdmin = false);
 	void addFoodInternal(std::string name, int caloriesPer100g, int proteinPer100g, int carbsPer100g, int fatPer100g);
 	void addExerciseInternal(std::string name, int caloriesBurnedPerHour, int suggestedDuration, std::string muscleGroup);
 public:

@@ -14,11 +14,16 @@ private:
 	double _targetValue = 0;
 	time_t _startDate = std::time(nullptr);
 	time_t _deadline = time_t(0);
-	bool isAchieved = false;
+	bool _isAchieved = false;
 public:
-	GoalType getGoalType() const;
-	double getTargetValue() const;
 	FitnessGoal() = default;
 	FitnessGoal(GoalType goalType, double targetValue, time_t deadline);
+	FitnessGoal(GoalType goalType, double targetValue, time_t startDate, time_t deadline, bool isAchieved);
+
+	GoalType getGoalType() const;
+	double getTargetValue() const;
+	time_t getStartDate() const;
+	time_t getDeadline() const;
+	bool getIsAchieved() const;
 };
 

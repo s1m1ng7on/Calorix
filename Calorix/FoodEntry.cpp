@@ -1,12 +1,21 @@
 #include "FoodEntry.h"
 
+FoodEntry::FoodEntry(const Food* food, int quantityGrams)
+	: _food(food)
+	, _quantityGrams(quantityGrams) {
+}
+
+const std::string& FoodEntry::getFoodName() const {
+	return _food->getName();
+}
+
+int FoodEntry::getQuantityGrams() const {
+	return _quantityGrams;
+}
+
 time_t FoodEntry::getDate() const {
 	return _date;
 }
-
-FoodEntry::FoodEntry(const Food* food, int quantityGrams)
-	: _food(food)
-	, _quantityGrams(quantityGrams) { }
 
 int FoodEntry::getNutrient(Nutrient type) const {
 	double value = 0;
