@@ -19,7 +19,7 @@ void Calorix::ensureIsAdmin() const {
         throw std::logic_error("This action required you to be an admin.");
 }
 
-User* Calorix::addUserInternal(std::string username, std::string password, int age, double weight, int height, Gender gender, bool isAdmin) {
+User* Calorix::addUserInternal(std::string username, std::string password, int age, double weight, int height, Gender gender, ActivityLevel activityLevel, bool isAdmin) {
     auto it = std::find_if(_users.begin(), _users.end(), [&](const auto& currentUser) {
         return currentUser->getUsername() == username;
         });
@@ -29,9 +29,9 @@ User* Calorix::addUserInternal(std::string username, std::string password, int a
 
     std::unique_ptr<User> newUser;
     if (isAdmin)
-        newUser = std::make_unique<Admin>(std::move(username), std::move(password), age, weight, height, gender, this);
+        newUser = std::make_unique<Admin>(std::move(username), std::move(password), age, weight, height, gender, activityLevel, this);
     else
-        newUser = std::make_unique<Trainee>(std::move(username), std::move(password), age, weight, height, gender, this);
+        newUser = std::make_unique<Trainee>(std::move(username), std::move(password), age, weight, height, gender, activityLevel, this);
 
     User* rawUser = newUser.get();
     _users.push_back(std::move(newUser));
@@ -43,14 +43,14 @@ void Calorix::addFoodInternal(std::string name, int caloriesPer100g, int protein
     if (getFoodByName(name))
         throw std::runtime_error("Food item with the same name already exists.");
 
-    _foods.push_back(std::make_shared<Food>(std::move(name), caloriesPer100g, proteinPer100g, carbsPer100g, fatPer100g));
+    _foods.push_back(std::make_unique<Food>(std::move(name), caloriesPer100g, proteinPer100g, carbsPer100g, fatPer100g));
 }
 
 void Calorix::addExerciseInternal(std::string name, int caloriesBurnedPerHour, int suggestedDuration, std::string muscleGroup) {
     if (getExerciseByName(name))
         throw std::runtime_error("Exercise with the same name already exists.");
 
-    _exercises.push_back(std::make_shared<Exercise>(std::move(name), caloriesBurnedPerHour, suggestedDuration, muscleGroup));
+    _exercises.push_back(std::make_unique<Exercise>(std::move(name), caloriesBurnedPerHour, suggestedDuration, muscleGroup));
 }
 
 Calorix::Calorix()
@@ -85,10 +85,10 @@ User* Calorix::getLoggedUser() const {
     return _loggedUser;
 }
 
-void Calorix::registerUser(std::string username, std::string password, int age, double weight, int height, Gender gender) {
+void Calorix::registerUser(std::string username, std::string password, int age, double weight, int height, Gender gender, ActivityLevel activityLevel) {
     ensureLoggedOut();
 
-    User* newUser = addUserInternal(std::move(username), std::move(password), age, weight, height, gender);
+    User* newUser = addUserInternal(std::move(username), std::move(password), age, weight, height, gender, activityLevel);
 
     if (newUser != nullptr)
         _loggedUser = newUser;
@@ -172,6 +172,6 @@ std::expected<const Exercise*, std::string> Calorix::getExerciseByName(const std
     return std::unexpected("Exercise with name '" + exerciseName + "' was not found.");
 }
 
-const std::vector<std::shared_ptr<Exercise>>& Calorix::getExercises() const {
+const std::vector<std::unique_ptr<Exercise>>& Calorix::getExercises() const {
     return _exercises;
 }

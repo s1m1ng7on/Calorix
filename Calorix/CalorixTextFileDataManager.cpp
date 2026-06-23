@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include "Calorix.h"
+#include "CalorixHelper.h"
 
 const std::string CalorixTextFileDataManager::_sectionDivider = "-------------------------------------------------\n";
 const std::string CalorixTextFileDataManager::_smallDivider = "---\n";;
@@ -26,47 +27,13 @@ std::vector<std::string> CalorixTextFileDataManager::split(const std::string& st
     return tokens;
 }
 
-Gender CalorixTextFileDataManager::parseGender(const std::string& genderStr) {
-    if (genderStr == "Male")
-        return Gender::Male;
-
-    if (genderStr == "Female")
-        return Gender::Female;
-
-    throw std::invalid_argument("Invalid gender string.");
-}
-
-GoalType CalorixTextFileDataManager::parseGoalStr(const std::string& goalTypeStr) {
-    if (goalTypeStr == "WeightLoss")
-        return GoalType::WeightLoss;
-
-    if (goalTypeStr == "Bulking")
-        return GoalType::Bulking;
-
-    if (goalTypeStr == "Maintenance")
-        return GoalType::Maintenance;
-
-    throw std::invalid_argument(std::format("Unknown GoalType string: {}", goalTypeStr));
-}
-
-std::string CalorixTextFileDataManager::parseGoal(GoalType goalType) {
-    switch (goalType) {
-    case GoalType::WeightLoss:
-        return "WeightLoss";
-    case GoalType::Bulking:
-        return "Bulking";
-    case GoalType::Maintenance:
-        return "Maintenance";
-    }
-
-    throw std::logic_error("Unhandled GoalType enum value");
-}
-
 void CalorixTextFileDataManager::loadFromFile(const std::string& filename, Calorix& calorix) {
     std::ifstream file(filename);
 
-    if (!file.is_open())
-        throw std::runtime_error(std::format("Could not open file : {}.", filename));
+    if (!file.is_open()) {
+        std::cout << std::format("Warning: Could not open file: {}. Starting with an empty state. File will be created upon exit.", filename) << std::endl;
+        return;
+    }
 
     std::string line;
     Section currentState = Section::None;
@@ -76,20 +43,23 @@ void CalorixTextFileDataManager::loadFromFile(const std::string& filename, Calor
     while (std::getline(file, line)) {
         line = trim(line);
 
-        if (line.empty() || line == "---" || line.find("----------------") == 0)
+        if (line.empty() || line.find("---") == 0)
             continue;
 
         if (line == "Food:") {
             currentState = Section::Food;
             continue;
         }
+
         if (line == "Exercises:") {
             currentState = Section::Exercises;
             continue;
         }
+
         if (line == "Users:") {
             currentState = Section::Users;
             currentSubsection = UserSubsection::None;
+            currentTrainee = nullptr;
             continue;
         }
 
@@ -98,10 +68,12 @@ void CalorixTextFileDataManager::loadFromFile(const std::string& filename, Calor
                 currentSubsection = UserSubsection::FoodDiary;
                 continue;
             }
+
             if (line == "ExerciseDiary:") {
                 currentSubsection = UserSubsection::ExerciseDiary;
                 continue;
             }
+
             if (line == "FavoriteExercises:") {
                 currentSubsection = UserSubsection::FavoriteExercises;
                 continue;
@@ -109,55 +81,43 @@ void CalorixTextFileDataManager::loadFromFile(const std::string& filename, Calor
         }
 
         std::vector<std::string> tokens = split(line, "|");
-
         try {
             switch (currentState) {
             case Section::Food:
-                calorix.addFoodInternal(tokens[0], std::stoi(tokens[1]), std::stoi(tokens[2]), std::stoi(tokens[3]), std::stoi(tokens[4]));
+                if (tokens.size() >= 5)
+                    calorix.addFoodInternal(tokens[0], std::stoi(tokens[1]), std::stoi(tokens[2]), std::stoi(tokens[3]), std::stoi(tokens[4]));
                 break;
-
             case Section::Exercises:
-                calorix.addExerciseInternal(tokens[0], std::stoi(tokens[1]), std::stoi(tokens[2]), tokens[3]);
+                if (tokens.size() >= 4)
+                    calorix.addExerciseInternal(tokens[0], std::stoi(tokens[1]), std::stoi(tokens[2]), tokens[3]);
                 break;
-
             case Section::Users:
-                if (line.find("Goals:") == 0) {
-                    if (currentTrainee) {
-                        std::string goalTypeStr = trim(tokens[0].substr(std::string("Goals:").length()));
-                        GoalType type = CalorixTextFileDataManager::parseGoalStr(goalTypeStr);
-                        double targetValue = std::stod(tokens[1]);
-                        time_t deadline = static_cast<time_t>(std::stoll(tokens[3]));
-
-                        currentTrainee->setGoals(type, targetValue, deadline);
+                if (tokens.size() >= 7 && (tokens[5] == "Male" || tokens[5] == "Female")) {
+                    currentSubsection = UserSubsection::None;
+                    bool isAdmin = (tokens.size() >= 8 && trim(tokens[7]) == "Admin");
+                    User* rawUser = calorix.addUserInternal(tokens[0], tokens[1], std::stoi(tokens[2]), std::stod(tokens[3]), std::stoi(tokens[4]), CalorixHelper::parseGenderStr(tokens[5]), CalorixHelper::parseActivityLevelStr(tokens[6]), isAdmin);
+                    currentTrainee = isAdmin ? nullptr : dynamic_cast<Trainee*>(rawUser);
+                }
+                else if (line.find("Goals:") == 0) {
+                    if (currentTrainee && tokens.size() >= 5) {
+                        std::string goalTypeStr = trim(tokens[0].substr(6));
+                        currentTrainee->setGoals(CalorixHelper::parseGoalStr(goalTypeStr), CalorixHelper::parseTargetTypeStr(tokens[1]), std::stod(tokens[2]), static_cast<time_t>(std::stoll(tokens[4])));
                     }
                 }
                 else if (currentSubsection == UserSubsection::FoodDiary) {
-                    if (currentTrainee)
+                    if (currentTrainee && tokens.size() >= 2)
                         currentTrainee->logFood(tokens[0], std::stoi(tokens[1]));
                 }
                 else if (currentSubsection == UserSubsection::ExerciseDiary) {
-                    if (currentTrainee)
+                    if (currentTrainee && tokens.size() >= 2)
                         currentTrainee->logExercise(tokens[0], std::stoi(tokens[1]));
                 }
                 else if (currentSubsection == UserSubsection::FavoriteExercises) {
                     if (currentTrainee)
                         currentTrainee->addToFavorites(line);
                 }
-                else {
-                    currentSubsection = UserSubsection::None;
-                    currentTrainee = nullptr;
-
-                    bool isAdmin = (tokens.size() > 6 && tokens[6] == "Admin");
-
-                    User* rawUser = calorix.addUserInternal(tokens[0], tokens[1], std::stoi(tokens[2]), std::stod(tokens[3]), std::stoi(tokens[4]), parseGender(tokens[5]), isAdmin);
-
-                    if (!isAdmin)
-                        currentTrainee = dynamic_cast<Trainee*>(rawUser);
-                }
                 break;
-
-            case Section::None:
-                break;
+            case Section::None: break;
             }
         }
         catch (const std::exception& e) {
@@ -213,7 +173,8 @@ void CalorixTextFileDataManager::saveToFile(const std::string& filename, const C
             << user->_profile->getAge() << " | "
             << user->_profile->getWeight() << " | "
             << user->_profile->getHeight() << " | "
-            << ((user->_profile->getGender() == Gender::Male) ? "Male" : "Female")
+            << CalorixHelper::parseGender(user->_profile->getGender()) << " | "
+            << CalorixHelper::parseActivityLevel(user->_profile->getActivityLevel())
             << (user->isAdmin() ? " | Admin" : "") << "\n";
 
 
@@ -223,7 +184,8 @@ void CalorixTextFileDataManager::saveToFile(const std::string& filename, const C
 
             file
                 << "Goals: "
-                << CalorixTextFileDataManager::parseGoal(goal.getGoalType()) << " | "
+                << CalorixHelper::parseGoal(goal.getGoalType()) << " | "
+                << CalorixHelper::parseTargetType(goal.getTargetType()) << " | "
                 << goal.getTargetValue() << " | "
                 << (long long)goal.getStartDate() << " | "
                 << (long long)goal.getDeadline() << " | "

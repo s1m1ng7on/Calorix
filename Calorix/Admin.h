@@ -6,7 +6,7 @@ class Calorix;
 class Admin : public User
 {
 public:
-	Admin(std::string username, std::string password, int age, double weight, int height, Gender gender, Calorix* app);
+	Admin(std::string username, std::string password, int age, double weight, int height, Gender gender, ActivityLevel activityLevel, Calorix* app);
 
 	bool isAdmin() const override;
 	void blockUser(const std::string& username);

@@ -28,16 +28,6 @@ Olive Oil, Extra Virgin | 884 | 0 | 0 | 100
 Tuna, Canned in Water | 116 | 26 | 0 | 1
 ---
 Apple, Gala | 52 | 0 | 14 | 0
----
-Cottage Cheese, Low Fat | 98 | 11 | 3 | 4
----
-Beef Ribeye, Grilled | 291 | 24 | 0 | 22
----
-Black Beans, Boiled | 341 | 21 | 62 | 1
----
-Milk, Skim (0%) | 35 | 3 | 5 | 0
----
-Chocolate, Dark (70%) | 546 | 5 | 61 | 31
 -------------------------------------------------
 Exercises:
 Bench Press | 450 | 15 | Chest
@@ -71,13 +61,89 @@ Lateral Raises | 240 | 8 | Shoulders
 Hammer Curls | 290 | 8 | Arms
 -------------------------------------------------
 Users:
-fitness_queen | fitlife2026 | 29 | 62.1 | 168 | Female
-Goals: Maintenance | 0 | 1782121446 | 0 | 0
+alex_fit | pass123 | 25 | 75.5 | 180 | Male | Moderate
+Goals: WeightLoss | Weight | 70 | 1782233726 | 1800 | 500
 FoodDiary:
-Chicken Breast | 200 | 1782121446
-White Rice | 150 | 1782121446
+Oatmeal, Rolled Oats | 100 | 1782233726
+Chicken Breast | 200 | 1782237326
+Banana, Medium | 120 | 1782240926
 ExerciseDiary:
-Bench Press | 30 | 1782121446
+Push-Ups | 15 | 1782233726
+Plank | 5 | 1782237326
+FavoriteFoods:
+Chicken Breast
+Banana, Medium
 FavoriteExercises:
-Pull-Ups
+Push-Ups
+Plank
+---
+maria_active | pass456 | 28 | 60 | 165 | Female | Active
+Goals: Maintenance | Weight | 60 | 1782233726 | 2200 | 0
+FoodDiary:
+Yogurt, Greek, Plain | 200 | 1782233726
+Apple, Gala | 150 | 1782237326
+Almonds, Roasted | 40 | 1782240926
+ExerciseDiary:
+HIIT Sprint | 20 | 1782233726
+Lateral Raises | 12 | 1782237326
+FavoriteFoods:
+Yogurt, Greek, Plain
+Apple, Gala
+FavoriteExercises:
+HIIT Sprint
+Lateral Raises
+---
+ivan_strength | iron99 | 32 | 88 | 185 | Male | VeryActive
+Goals: Bulking | Weight | 95 | 1782233726 | 3400 | 700
+FoodDiary:
+White Rice | 250 | 1782233726
+Chicken Breast | 300 | 1782237326
+Whole Egg | 180 | 1782240926
+ExerciseDiary:
+Deadlift | 45 | 1782233726
+Barbell Squat | 40 | 1782237326
+Pull-Ups | 20 | 1782240926
+FavoriteFoods:
+White Rice
+Chicken Breast
+FavoriteExercises:
 Deadlift
+Barbell Squat
+---
+george_bulk | gainz88 | 27 | 92 | 190 | Male | Active
+Goals: Bulking | Weight | 100 | 1782233726 | 3600 | 800
+FoodDiary:
+Peanut Butter, Smooth | 60 | 1782233726
+White Rice | 300 | 1782237326
+Salmon, Atlantic | 250 | 1782240926
+ExerciseDiary:
+Bench Press | 30 | 1782233726
+Incline Dumbbell Fly | 15 | 1782237326
+Overhead Press | 20 | 1782240926
+FavoriteFoods:
+Peanut Butter, Smooth
+Salmon, Atlantic
+FavoriteExercises:
+Bench Press
+Barbell Squat
+---
+petya_runner | runfast22 | 24 | 55 | 168 | Female | VeryActive
+Goals: WeightLoss | Weight | 52 | 1782233726 | 1700 | 400
+FoodDiary:
+Broccoli, Steamed | 200 | 1782233726
+Tuna, Canned in Water | 180 | 1782237326
+Apple, Gala | 120 | 1782240926
+ExerciseDiary:
+HIIT Sprint | 25 | 1782233726
+Plank | 8 | 1782237326
+Hanging Leg Raise | 10 | 1782240926
+FavoriteFoods:
+Broccoli, Steamed
+Tuna, Canned in Water
+FavoriteExercises:
+HIIT Sprint
+Hanging Leg Raise
+---
+admin_calorix | supersecret123 | 40 | 85 | 175 | Male | Moderate | Admin
+---
+admin_manager | rootpass456 | 38 | 78 | 182 | Female | Active | Admin

@@ -1,10 +1,11 @@
 #include "Trainee.h"
 #include <iostream>
-#include "Helper.h"
+#include "CalorixHelper.h"
 #include "Calorix.h"
+#include <sstream>
 
-Trainee::Trainee(std::string username, std::string password, int age, double weight, int height, Gender gender, Calorix* app)
-	: User(std::move(username), std::move(password), age, weight, height, gender, app) { }
+Trainee::Trainee(std::string username, std::string password, int age, double weight, int height, Gender gender, ActivityLevel activityLevel, Calorix* app)
+	: User(std::move(username), std::move(password), age, weight, height, gender, activityLevel, app) { }
 
 const std::vector<FoodEntry>& Trainee::getFoodDiary() const {
 	return _foodDiary;
@@ -22,48 +23,49 @@ const std::vector<const Exercise*>& Trainee::getFavoriteExercises() const {
 	return _favoriteExercises;
 }
 
-void Trainee::setGoals(GoalType goalType, double targetValue, time_t deadline) {
-	_goals = FitnessGoal(goalType, targetValue, deadline);
+void Trainee::setGoals(GoalType goalType, TargetType targetType, double targetValue, time_t deadline) {
+	_goals = FitnessGoal(goalType, targetType, targetValue, deadline);
 }
 
-void Trainee::logFood(const std::string& foodName, int quantityGrams) {
+std::expected<void, std::string> Trainee::logFood(const std::string& foodName, int quantityGrams) {
 	auto result = _app->getFoodByName(foodName);
 
 	if (result) {
 		FoodEntry newFoodEntry(result.value(), quantityGrams);
 		_foodDiary.push_back(std::move(newFoodEntry));
-
-		std::cout << foodName << " logged in your food diary.";
+		return { };
 	}
 	else {
-		std::cout << foodName << " could not be found in the database.";
+		return std::unexpected(std::format("{} could not be found in foods.", foodName));
 	}
 }
 
-void Trainee::logExercise(const std::string& exerciseName, int durationMinutes) {
+std::expected<void, std::string> Trainee::logExercise(const std::string& exerciseName, int durationMinutes) {
 	auto result = _app->getExerciseByName(exerciseName);
 
 	if (result) {
 		ExerciseEntry newExerciseEntry(result.value(), durationMinutes);
 		_exerciseDiary.push_back(std::move(newExerciseEntry));
-
-		std::cout << exerciseName << " logged in your exercise diary.";
+		return { };
 	}
 	else {
-		std::cout << exerciseName << " could not be found in the database.";
+		return std::unexpected(std::format("{} could not be found in exercises.", exerciseName));
 	}
 }
 
-void Trainee::viewDailySummary() const {
+void Trainee::logWeight(double newWeight) const {
+	_profile->setWeight(newWeight);
+}
+
+std::string Trainee::viewDailySummary() const {
 	int totalConsumedCalories = 0;
 	int totalProtein = 0;
 	int totalCarbs = 0;
 	int totalFat = 0;
-
 	int totalBurnedCalories = 0;
 
 	for (const auto& foodEntry : _foodDiary) {
-		if (Helper::isToday(foodEntry.getDate())) {
+		if (CalorixHelper::isToday(foodEntry.getDate())) {
 			totalConsumedCalories += foodEntry.getNutrient(Nutrient::Calories);
 			totalProtein += foodEntry.getNutrient(Nutrient::Protein);
 			totalCarbs += foodEntry.getNutrient(Nutrient::Carbs);
@@ -72,93 +74,113 @@ void Trainee::viewDailySummary() const {
 	}
 
 	for (const auto& exerciseEntry : _exerciseDiary) {
-		if (Helper::isToday(exerciseEntry.getDate())) {
+		if (CalorixHelper::isToday(exerciseEntry.getDate())) {
 			totalBurnedCalories += exerciseEntry.getBurnedCalories();
 		}
 	}
 
 	int netCaloricBalance = totalConsumedCalories - totalBurnedCalories;
 
-	std::cout
-		<< "--DAILY SUMMARY--"
-		<< std::endl
-		<< "Calories consumed: "
-		<< totalConsumedCalories
-		<< " kcal"
-		<< std::endl
-		<< "Protein: "
-		<< totalProtein
-		<< " g"
-		<< std::endl
-		<< "Carbs: "
-		<< totalCarbs
-		<< " g"
-		<< std::endl
-		<< "Fat: "
-		<< totalFat
-		<< " g"
-		<< std::endl
-		<< "Burned Calories: "
-		<< totalBurnedCalories
-		<< " kcal"
-		<< std::endl
-		<< std::endl
-		<< "Net Caloric Balance: "
-		<< netCaloricBalance
-		<< " kcal"
-		<< std::endl;
+	return std::format(
+		"--DAILY SUMMARY--\n"
+		"Calories consumed: {} kcal\n"
+		"Protein: {} g\n"
+		"Carbs: {} g\n"
+		"Fat: {} g\n"
+		"Burned Calories: {} kcal\n\n"
+		"Net Caloric Balance: {} kcal\n",
+		totalConsumedCalories, totalProtein, totalCarbs, totalFat, totalBurnedCalories, netCaloricBalance
+	);
 }
 
-void Trainee::viewProgress() const {
+std::string Trainee::viewProgress() {
 	GoalType currentGoal = _goals.getGoalType();
-	
+	TargetType targetType = _goals.getTargetType();
+	double targetValue = _goals.getTargetValue();
+
 	if (currentGoal == GoalType::Maintenance) {
-		std::cout << "You are currently maintaining." << std::endl;
-		return;
+		_goals.setIsAchieved(true);
+		return "You are currently maintaining.";
+	}
+
+	if (targetType == TargetType::Calories) {
+		int totalConsumedCalories = 0;
+		int totalBurnedCalories = 0;
+
+		for (const auto& foodEntry : _foodDiary) {
+			if (CalorixHelper::isToday(foodEntry.getDate())) {
+				totalConsumedCalories += foodEntry.getNutrient(Nutrient::Calories);
+			}
+		}
+		for (const auto& exerciseEntry : _exerciseDiary) {
+			if (CalorixHelper::isToday(exerciseEntry.getDate())) {
+				totalBurnedCalories += exerciseEntry.getBurnedCalories();
+			}
+		}
+
+		int netCaloricBalance = totalConsumedCalories - totalBurnedCalories;
+		double bmr = calculateBMR();
+
+		if (currentGoal == GoalType::WeightLoss) {
+			double targetCalories = bmr - std::abs(targetValue);
+			if (netCaloricBalance <= targetCalories) {
+				_goals.setIsAchieved(true);
+				return "Congratulations! You are successfully within your calorie deficit today!";
+			}
+			else {
+				_goals.setIsAchieved(false);
+				return std::format("You need to burn {} kcal more today to reach your deficit limit.", (netCaloricBalance - targetCalories));
+			}
+		}
+		else if (currentGoal == GoalType::Bulking) {
+			double targetCalories = bmr + std::abs(targetValue);
+			if (netCaloricBalance >= targetCalories) {
+				_goals.setIsAchieved(true);
+				return "Congratulations! You hit your calorie surplus today!";
+			}
+			else {
+				_goals.setIsAchieved(false);
+				return std::format("You need to consume {} kcal more today to reach your surplus target.", (targetCalories - netCaloricBalance));
+			}
+		}
 	}
 
 	double currentWeight = _profile->getWeight();
-	double targetWeight = _goals.getTargetValue();
 
 	if (currentGoal == GoalType::Bulking) {
-		if (currentWeight >= targetWeight) {
-			std::cout << "Congratulations! You have reached (or exceeded) your bulking target weight!" << std::endl;
+		if (currentWeight >= targetValue) {
+			_goals.setIsAchieved(true);
+			return "Congratulations! You have reached your bulking target weight!";
 		}
 		else {
-			double weightLeft = targetWeight - currentWeight;
-			std::cout << "You need to bulk another " << weightLeft << " kg to reach your target." << std::endl;
+			_goals.setIsAchieved(false);
+			return std::format("You need to bulk another {} kg to reach your target.", (targetValue - currentWeight));
 		}
 	}
 	else if (currentGoal == GoalType::WeightLoss) {
-		if (currentWeight <= targetWeight) {
-			std::cout << "Congratulations! You have reached (or dropped below) your cutting target weight!" << std::endl;
+		if (currentWeight <= targetValue) {
+			_goals.setIsAchieved(true);
+			return "Congratulations! You have reached your cutting target weight!";
 		}
 		else {
-			double weightLeft = currentWeight - targetWeight;
-			std::cout << "You need to lose another " << weightLeft << " kg to reach your target." << std::endl;
+			_goals.setIsAchieved(false);
+			return std::format("You need to lose another {} kg to reach your target.", (currentWeight - targetValue));
 		}
 	}
+
+	return "";
 }
 
-void Trainee::calculateBMI() const {
-	double BMI = _profile->getWeight() / pow(_profile->getHeight() / 100.0, 2);
-
-	std::cout
-		<< "BMI: "
-		<< BMI
-		<< std::endl;
+double Trainee::calculateBMI() const {
+	return _profile->getWeight() / pow(_profile->getHeight() / 100.0, 2);
 }
 
-void Trainee::calculateBMR() const {
-	double BMR = 10 * _profile->getWeight()
+double Trainee::calculateBMR() const {
+	return
+		10 * _profile->getWeight()
 		+ 6.25 * _profile->getHeight()
 		- 5 * _profile->getAge()
 		+ (_profile->getGender() == Gender::Male ? 5 : -161);
-
-	std::cout
-		<< "BMR: "
-		<< BMR
-		<< std::endl;
 }
 
 std::vector<const Exercise*> Trainee::generateWorkoutPlan(int durationMinutes) const {
@@ -210,24 +232,32 @@ std::vector<const Exercise*> Trainee::generateWorkoutPlan(int durationMinutes) c
 	return workoutPlan;
 }
 
-void Trainee::addToFavorites(const std::string& exerciseName) {
+std::expected<void, std::string> Trainee::addToFavorites(const std::string& exerciseName) {
 	auto exercise = _app->getExerciseByName(exerciseName);
 
-	if (exercise) {
-		auto it = std::find(_favoriteExercises.begin(), _favoriteExercises.end(), exercise.value());
-		if (it == _favoriteExercises.end()) {
-			_favoriteExercises.push_back(exercise.value());
-			std::cout << "Exercise '" + exerciseName + "' was successfully added to your Favorites." << std::endl;
-		}
-		else {
-			throw std::invalid_argument("Exercise '" + exerciseName + "' is already in your Favorites.");
-		}
+	if (!exercise) {
+		return std::unexpected(std::format("Exercise '{}' could not be found.", exerciseName));
+	}
+
+	auto it = std::find(_favoriteExercises.begin(), _favoriteExercises.end(), exercise.value());
+	if (it == _favoriteExercises.end()) {
+		_favoriteExercises.push_back(exercise.value());
+		return { };
+	}
+	else {
+		return std::unexpected(std::format("Exercise '{}' is already in your Favorites.", exerciseName));
 	}
 }
 
-void Trainee::viewFavorites() const {
+std::string Trainee::viewFavorites() const {
+	if (_favoriteExercises.empty())
+		return "There are no favorite exercises added yer.";
+
+	std::stringstream ss;
 	for (const auto& exercise : _favoriteExercises) {
-		std::cout << *exercise << std::endl;
+		ss << *exercise << std::endl;
 	}
+
+	return ss.str();
 }
 

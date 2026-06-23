@@ -1,8 +1,8 @@
 #include "Admin.h"
 #include "Calorix.h"
 
-Admin::Admin(std::string username, std::string password, int age, double weight, int height, Gender gender, Calorix* app)
-	: User(std::move(username), std::move(password), age, weight, height, gender, app) {
+Admin::Admin(std::string username, std::string password, int age, double weight, int height, Gender gender, ActivityLevel activityLevel, Calorix* app)
+	: User(std::move(username), std::move(password), age, weight, height, gender, activityLevel, app) {
 }
 
 bool Admin::isAdmin() const {

@@ -45,7 +45,7 @@
     <ClCompile Include="FitnessGoal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Helper.cpp">
+    <ClCompile Include="CalorixHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Admin.cpp">
@@ -89,7 +89,7 @@
     <ClInclude Include="FitnessGoal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Helper.h">
+    <ClInclude Include="CalorixHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Admin.h">

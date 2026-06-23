@@ -18,7 +18,7 @@ public:
 	bool authenticate(const std::string& rawPassword) const;
 	virtual bool isAdmin() const;
 
-	User(std::string username, std::string password, int age, double weight, int height, Gender gender, Calorix* app);
+	User(std::string username, std::string password, int age, double weight, int height, Gender gender, ActivityLevel activityLevel, Calorix* app);
 	virtual ~User() = default;
 protected:
 	std::unique_ptr<UserProfile> _profile;

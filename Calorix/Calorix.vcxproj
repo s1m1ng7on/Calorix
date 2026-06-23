@@ -135,7 +135,7 @@
     <ClCompile Include="FitnessGoal.cpp" />
     <ClCompile Include="Food.cpp" />
     <ClCompile Include="FoodEntry.cpp" />
-    <ClCompile Include="Helper.cpp" />
+    <ClCompile Include="CalorixHelper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="CalorixTextFileDataManager.cpp" />
     <ClCompile Include="Trainee.cpp" />
@@ -151,7 +151,7 @@
     <ClInclude Include="FitnessGoal.h" />
     <ClInclude Include="Food.h" />
     <ClInclude Include="FoodEntry.h" />
-    <ClInclude Include="Helper.h" />
+    <ClInclude Include="CalorixHelper.h" />
     <ClInclude Include="IAdminOperations.h" />
     <ClInclude Include="Identifiable.hpp" />
     <ClInclude Include="ITraineeOperations.h" />

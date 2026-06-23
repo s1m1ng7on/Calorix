@@ -2,6 +2,8 @@
 #include "Admin.h"
 #include <iostream>
 #include "Calorix.h"
+#include <expected>
+#include "CalorixHelper.h"
 
 CalorixUIManager::CalorixUIManager(Calorix& calorix)
     : _calorix(calorix) {
@@ -58,6 +60,8 @@ void CalorixUIManager::executeCommand(const std::string& command, std::stringstr
         handleLogFood(ss);
     else if (command == "log-exercise")
         handleLogExercise(ss);
+    else if (command == "log-weight")
+        handleLogWeight(ss);
     else if (command == "view-daily-summary")
         handleViewDailySummary();
     else if (command == "view-progress")
@@ -85,18 +89,19 @@ void CalorixUIManager::executeCommand(const std::string& command, std::stringstr
 }
 
 void CalorixUIManager::handleRegister(std::stringstream& ss) {
-    std::string username, password, genderStr;
+    std::string username, password, genderStr, activityLevelStr;
     int age, height;
     double weight;
 
-    if (!(ss >> username >> password >> age >> weight >> height >> genderStr)) {
-        std::cout << "Usage: register <username> <password> <age> <weight> <height> <Male/Female>" << std::endl;
+    if (!(ss >> username >> password >> age >> weight >> height >> genderStr >> activityLevelStr)) {
+        std::cout << "Usage: register <username> <password> <age> <weight> <height> <Male/Female> <Sedentary/Light/Moderate/Active/VeryActive>" << std::endl;
         return;
     }
 
-    Gender gender = (genderStr == "Male") ? Gender::Male : Gender::Female;
+    Gender gender = CalorixHelper::parseGenderStr(genderStr);
+    ActivityLevel activityLevel = CalorixHelper::parseActivityLevelStr(activityLevelStr);
 
-    _calorix.registerUser(username, password, age, weight, height, gender);
+    _calorix.registerUser(username, password, age, weight, height, gender, activityLevel);
 
     std::cout << "User '" << username << "' registered and logged in successfully." << std::endl;
 }
@@ -122,7 +127,7 @@ void CalorixUIManager::handleLogout() {
 void CalorixUIManager::handleHelp() {
     if (!_calorix.isLogged()) {
         std::cout << "Available commands (not logged in):" << std::endl;
-        std::cout << "  register <username> <password> <age> <weight> <height> <Male/Female>" << std::endl;
+        std::cout << "  register <username> <password> <age> <weight> <height> <Male/Female> <Sedentary/Light/Moderate/Active/VeryActive>" << std::endl;
         std::cout << "  login <username> <password>" << std::endl;
         std::cout << "  end" << std::endl;
         return;
@@ -139,9 +144,10 @@ void CalorixUIManager::handleHelp() {
     }
     else {
         std::cout << "Available commands (Trainee):" << std::endl;
-        std::cout << "  set-goals <WeightLoss/Bulking/Maintenance> <target_value> <deadline_timestamp>" << std::endl;
+        std::cout << "  set-goals <WeightLoss/Bulking/Maintenance> <target_value> <deadline (DD/MM/YYYY)>" << std::endl;
         std::cout << "  log-food <food_name> <quantity_grams>" << std::endl;
         std::cout << "  log-exercise <exercise_name> <duration_minutes>" << std::endl;
+        std::cout << "  log-weight <new_weight>" << std::endl;
         std::cout << "  view-daily-summary" << std::endl;
         std::cout << "  view-progress" << std::endl;
         std::cout << "  calculate-bmi" << std::endl;
@@ -162,28 +168,42 @@ void CalorixUIManager::handleSetGoals(std::stringstream& ss) {
     }
 
     std::string goalTypeStr;
+    std::string targetTypeStr;
     double targetValue;
-    time_t deadline;
+    std::string dateStr;
 
-    if (!(ss >> goalTypeStr >> targetValue >> deadline)) {
-        std::cout << "Usage: set-goals <WeightLoss/Bulking/Maintenance> <target_value> <deadline_timestamp>" << std::endl;
+    if (!(ss >> goalTypeStr >> targetTypeStr >> targetValue >> dateStr)) {
+        std::cout << "Usage: set-goals <WeightLoss/Bulking/Maintenance> <Weight/Calories> <target_value> <DD-MM-YYYY>" << std::endl;
         return;
     }
 
-    GoalType goalType = GoalType::Maintenance;
-
-    if (goalTypeStr == "WeightLoss")
-        goalType = GoalType::WeightLoss;
-    else if (goalTypeStr == "Bulking")
-        goalType = GoalType::Bulking;
-    else if (goalTypeStr == "Maintenance")
-        goalType = GoalType::Maintenance;
-    else {
-        std::cout << "Unknown goal type. Use WeightLoss, Bulking or Maintenance." << std::endl;
+    int day, month, year;
+    if (sscanf_s(dateStr.c_str(), "%d-%d-%d", &day, &month, &year) != 3) {
+        std::cout << "Invalid date format. Use DD-MM-YYYY (e.g. 31-12-2025)" << std::endl;
         return;
     }
 
-    trainee->setGoals(goalType, targetValue, deadline);
+    std::tm tm = {};
+    tm.tm_mday = day;
+    tm.tm_mon = month - 1;
+    tm.tm_year = year - 1900;
+    tm.tm_hour = 23;
+    tm.tm_min = 59;
+    tm.tm_sec = 59;
+    tm.tm_isdst = -1;
+
+    time_t deadline = std::mktime(&tm);
+
+    if (deadline == -1) {
+        std::cout << "Could not convert date to timestamp. Check the date is valid." << std::endl;
+        return;
+    }
+
+    GoalType goalType = CalorixHelper::parseGoalStr(goalTypeStr);
+    TargetType targetType = CalorixHelper::parseTargetTypeStr(targetTypeStr);
+
+    trainee->setGoals(goalType, targetType, targetValue, deadline);
+
     std::cout << "Goals set successfully." << std::endl;
 }
 
@@ -216,7 +236,13 @@ void CalorixUIManager::handleLogFood(std::stringstream& ss) {
         return;
     }
 
-    trainee->logFood(foodName, quantity);
+    auto result = trainee->logFood(foodName, quantity);
+
+    if (result)
+        std::cout << std::format("{} logged in your food diary.", foodName);
+    else
+        std::cout << result.error();
+
     std::cout << std::endl;
 }
 
@@ -249,8 +275,32 @@ void CalorixUIManager::handleLogExercise(std::stringstream& ss) {
         return;
     }
 
-    trainee->logExercise(exerciseName, duration);
+    auto result = trainee->logExercise(exerciseName, duration);
+
+    if (result)
+        std::cout << std::format("{} logged in your exercise diary.", exerciseName);
+    else
+        std::cout << result.error();
+
     std::cout << std::endl;
+}
+
+void CalorixUIManager::handleLogWeight(std::stringstream& ss) {
+    Trainee* trainee = getLoggedTrainee();
+    if (trainee == nullptr) {
+        std::cout << "This command is only available for Trainee users." << std::endl;
+        return;
+    }
+
+    double newWeight;
+    if (!(ss >> newWeight)) {
+        std::cout << "Usage: update-weight <new_weight>" << std::endl;
+        return;
+    }
+
+    trainee->logWeight(newWeight);
+
+    std::cout << "Weight successfully updated to " << newWeight << " kg." << std::endl;
 }
 
 void CalorixUIManager::handleViewDailySummary() {
@@ -260,7 +310,7 @@ void CalorixUIManager::handleViewDailySummary() {
         return;
     }
 
-    trainee->viewDailySummary();
+    std::cout << trainee->viewDailySummary();
 }
 
 void CalorixUIManager::handleViewProgress() {
@@ -270,7 +320,7 @@ void CalorixUIManager::handleViewProgress() {
         return;
     }
 
-    trainee->viewProgress();
+    std::cout << trainee->viewProgress() << std::endl;
 }
 
 void CalorixUIManager::handleCalculateBMI() {
@@ -280,7 +330,9 @@ void CalorixUIManager::handleCalculateBMI() {
         return;
     }
 
-    trainee->calculateBMI();
+    double bmi = trainee->calculateBMI();
+
+    std::cout << std::format("BMI: {}", bmi) << std::endl;
 }
 
 void CalorixUIManager::handleCalculateBMR() {
@@ -290,7 +342,9 @@ void CalorixUIManager::handleCalculateBMR() {
         return;
     }
 
-    trainee->calculateBMR();
+    double bmr = trainee->calculateBMR();
+
+    std::cout << std::format("BMR: {}", bmr) << std::endl;
 }
 
 void CalorixUIManager::handleGenerateWorkoutPlan(std::stringstream& ss) {
@@ -342,7 +396,14 @@ void CalorixUIManager::handleAddToFavorites(std::stringstream& ss) {
         return;
     }
 
-    trainee->addToFavorites(exerciseName);
+    auto result = trainee->addToFavorites(exerciseName);
+
+    if (result)
+        std::cout << "Exercise '" + exerciseName + "' was successfully added to your Favorites.";
+    else
+        std::cout << result.error();
+
+    std::cout << std::endl;
 }
 
 void CalorixUIManager::handleViewFavorites() {
@@ -352,7 +413,7 @@ void CalorixUIManager::handleViewFavorites() {
         return;
     }
 
-    trainee->viewFavorites();
+    std::cout << trainee->viewFavorites();
 }
 
 void CalorixUIManager::handleBlockUser(std::stringstream& ss) {

@@ -23,6 +23,7 @@ private:
     void handleSetGoals(std::stringstream& ss);
     void handleLogFood(std::stringstream& ss);
     void handleLogExercise(std::stringstream& ss);
+    void handleLogWeight(std::stringstream& ss);
     void handleViewDailySummary();
     void handleViewProgress();
     void handleCalculateBMI();

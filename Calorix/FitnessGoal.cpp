@@ -1,14 +1,16 @@
 #include "FitnessGoal.h"
 
-FitnessGoal::FitnessGoal(GoalType goalType, double targetValue, time_t deadline)
+FitnessGoal::FitnessGoal(GoalType goalType, TargetType targetType, double targetValue, time_t deadline)
     : _goalType(goalType)
+    , _targetType(targetType)
     , _targetValue(targetValue)
     , _startDate(std::time(nullptr))
     , _deadline(deadline)
     , _isAchieved(false) { }
 
-FitnessGoal::FitnessGoal(GoalType goalType, double targetValue, time_t startDate, time_t deadline, bool isAchieved)
+FitnessGoal::FitnessGoal(GoalType goalType, TargetType targetType, double targetValue, time_t startDate, time_t deadline, bool isAchieved)
     : _goalType(goalType)
+    , _targetType(targetType)
     , _targetValue(targetValue)
     , _startDate(startDate)
     , _deadline(deadline)
@@ -17,6 +19,10 @@ FitnessGoal::FitnessGoal(GoalType goalType, double targetValue, time_t startDate
 
 GoalType FitnessGoal::getGoalType() const {
     return _goalType;
+}
+
+TargetType FitnessGoal::getTargetType() const {
+    return _targetType;
 }
 
 double FitnessGoal::getTargetValue() const {
@@ -33,4 +39,8 @@ time_t FitnessGoal::getDeadline() const {
 
 bool FitnessGoal::getIsAchieved() const {
     return _isAchieved;
+}
+
+void FitnessGoal::setIsAchieved(bool isAchieved) {
+    _isAchieved = isAchieved;
 }
